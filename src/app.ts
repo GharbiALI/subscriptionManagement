@@ -1,11 +1,11 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
+import indexRoutes from './routes/index.routes';
 
 const app = express();
 
 app.use(express.json());
 
-app.get('/api', (req: Request, res: Response) => {
-  res.send('Hello, World!');
-});
+app.use("/api", indexRoutes);
+
 
 export default app;

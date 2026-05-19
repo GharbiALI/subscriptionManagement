@@ -13,7 +13,7 @@ describe("User Validator", () => {
       const result = validateUserInput(name, email, password);
 
       //then
-      expect(result).toBeNull();
+     expect(result).toBeNull();
     });
 
     it("should return error when name is empty", () => {

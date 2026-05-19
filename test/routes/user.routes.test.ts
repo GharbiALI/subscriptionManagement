@@ -9,7 +9,7 @@ describe("POST /api/user/register (integration)", () => {
     await connectTestDB();
   });
 
-  afterAll(async () => {
+   afterAll(async () => {
     await disconnectTestDB();
   });
 

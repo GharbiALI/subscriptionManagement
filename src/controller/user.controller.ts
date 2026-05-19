@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import bcrypt from "bcryptjs";
 import { registerUser, getUserByEmail } from "../services/user.services";
 import { mapUserResponse } from "../mapper/user.mapper";
 import { generateToken } from "../auth/auth.services"; 
@@ -33,3 +34,38 @@ export const register = async (
   }
 };
 
+export const login = async (
+  req: Request,
+  res: Response,
+): Promise<void | Response> => {
+  try {
+    const { email, password } = req.body;
+
+    const user = (await getUserByEmail(email)) as 
+      | (IUser & { _id: unknown }) 
+      | null;
+
+    if (!user) {
+      return res.status(401).json({
+        error: "Invalid credentials",
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({
+        error: "Invalid credentials",
+      });
+    }
+
+    const token = generateToken(user._id as any, user.role);
+
+    return res.status(200).json({
+      user: mapUserResponse(user),
+      token,
+    });
+
+  } catch (err) {
+    return res.status(500).json({ error: "Failed to login" });
+  }
+};

@@ -21,3 +21,20 @@ export const validateUserInput = (
 
   return errors.length > 0 ? errors : null;
 };
+
+export const validateUserLogin = (
+  email: string,
+  password: string
+): string[] | null => {
+  const errors: string[] = [];
+
+  if (!email || !validator.isEmail(email)) {
+    errors.push("A valid email is required");
+  }
+
+  if (!password || !validator.isLength(password, { min: 8 })) {
+    errors.push("Password must be at least 8 characters");
+  }
+
+  return errors.length > 0 ? errors : null;
+};

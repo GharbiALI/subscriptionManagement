@@ -1,5 +1,6 @@
 import { validateUserInput } from "../../src/validator/user.validator";
 
+
 describe("User Validator", () => {
   describe("validateUserInput", () => {
 

@@ -3,6 +3,7 @@ import {
   getProducts,
   createProduct,
   updateProduct,
+  softDeleteProduct
 } from "../controller/product.controller";
 import { authenticate, authorizeAdmin } from "../auth/auth.middleware";
 import {
@@ -32,5 +33,11 @@ router.put(
   validateUpdateProductBody,
   updateProduct,
 );
-
+router.delete(
+  "/:id/soft-delete",
+  authenticate,
+  authorizeAdmin,
+  validateIdMiddleware,
+  softDeleteProduct
+);
 export default router;

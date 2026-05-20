@@ -1,5 +1,7 @@
 import {
-  findAllActiveProducts,createProduct
+  findAllActiveProducts,
+  createProduct,
+  updateProductById,
 } from "../repository/product.repository";
 import { IProduct } from "../schemas/product.schemas";
 
@@ -12,3 +14,11 @@ export const addProduct = async (
 ): Promise<IProduct> => {
   return createProduct(data);
 };
+
+export const updateProduct = async (
+  id: string,
+  data: Partial<IProduct>,
+): Promise<IProduct | null> => {
+  return updateProductById(id, data);
+};
+

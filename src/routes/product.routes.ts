@@ -1,7 +1,15 @@
 import { Router } from "express";
-import { getProducts, createProduct } from "../controller/product.controller";
+import {
+  getProducts,
+  createProduct,
+  updateProduct,
+} from "../controller/product.controller";
 import { authenticate, authorizeAdmin } from "../auth/auth.middleware";
-import { validateProductMiddleware } from "../middleware/product.middleware";
+import {
+  validateProductMiddleware,
+  validateIdMiddleware,
+  validateUpdateProductBody,
+} from "../middleware/product.middleware";
 
 const router = Router();
 
@@ -15,6 +23,14 @@ router.post(
   authorizeAdmin,
   validateProductMiddleware,
   createProduct,
+);
+router.put(
+  "/:id",
+  authenticate,
+  authorizeAdmin,
+  validateIdMiddleware,
+  validateUpdateProductBody,
+  updateProduct,
 );
 
 export default router;

@@ -25,6 +25,7 @@ describe("Product routes integration", () => {
 
   describe("GET /api/product", () => {
     it("should return 200 with active products", async () => {
+      // Given
       await Product.create([
         {
           name: "AI Model Subscription",
@@ -35,8 +36,10 @@ describe("Product routes integration", () => {
         },
       ]);
 
+      // When
       const res = await request(app).get("/api/product");
 
+      // Then
       expect(res.status).toBe(200);
       expect(res.body).toHaveProperty("data");
       expect(Array.isArray(res.body.data)).toBe(true);
@@ -57,6 +60,7 @@ describe("Product routes integration", () => {
     const adminToken = `Bearer ${generateToken(new Types.ObjectId(), "admin")}`;
 
     it("should create a new product when input is valid and user is admin", async () => {
+      // Given
       const payload = {
         name: "AI Analytics API",
         companyName: "Bard",
@@ -65,28 +69,33 @@ describe("Product routes integration", () => {
         isActive: true,
       };
 
+      // When
       const res = await request(app)
         .post("/api/product")
         .set("Authorization", adminToken)
         .send(payload);
 
+      // Then
       expect(res.status).toBe(201);
       expect(res.body).toHaveProperty("data");
       expect(res.body.data).toMatchObject(payload);
     });
 
     it("should return 400 when product input is invalid", async () => {
+      // Given
       const invalidPayload = {
         name: "",
         companyName: "",
         price: -10,
       };
 
+      // When
       const res = await request(app)
         .post("/api/product")
         .set("Authorization", adminToken)
         .send(invalidPayload);
 
+      // Then
       expect(res.status).toBe(400);
       expect(res.body).toHaveProperty("error");
       expect(Array.isArray(res.body.error)).toBe(true);
@@ -99,4 +108,52 @@ describe("Product routes integration", () => {
       );
     });
   });
+
+  describe("PUT /api/product/:id", () => {
+  const adminToken = `Bearer ${generateToken(
+    new Types.ObjectId(),
+    "admin",
+  )}`;
+
+  it("should update a product when id and body are valid", async () => {
+    // Given
+    const product = await Product.create({
+      name: "AI Model Subscription",
+      companyName: "Chat GPT",
+      price: 49.99,
+      description: "Access to generative AI model endpoints",
+      isActive: true,
+    });
+
+    const updatePayload = {
+      price: 59.99,
+      description: "Updated access to generative AI model endpoints",
+    };
+
+    // When
+    const res = await request(app)
+      .put(`/api/product/${product._id.toString()}`)
+      .set("Authorization", adminToken)
+      .send(updatePayload);
+
+    // Then
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty("data");
+  });
+
+  it("should return 400 when product id is invalid", async () => {
+    // Given
+    const invalidId = "invalid-id";
+
+    // When
+    const res = await request(app)
+      .put(`/api/product/${invalidId}`)
+      .set("Authorization", adminToken)
+      .send({ price: 59.99 });
+
+    // Then
+    expect(res.status).toBe(400);
+    expect(res.body).toHaveProperty("error", "Invalid product ID");
+  });
+});
 });

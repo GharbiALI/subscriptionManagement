@@ -17,3 +17,8 @@ export const generateToken = (userId: Types.ObjectId, role: string): string => {
     expiresIn: jwtExpiresIn,
   } as jwt.SignOptions);
 };
+
+export const verifyToken = (token: string): JwtPayload => {
+  return jwt.verify(token, jwtSecret) as JwtPayload;
+};
+

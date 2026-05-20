@@ -1,4 +1,8 @@
-import { createUser,findUserByEmail } from "../repository/user.repository";
+import {
+  createUser,
+  findUserByEmail,
+  findUserById,
+} from "../repository/user.repository";
 import bcrypt from "bcryptjs";
 
 export const registerUser = async (
@@ -16,5 +20,9 @@ export const registerUser = async (
 };
 
 export const getUserByEmail = async (email: string) => {
-  return findUserByEmail(email); 
-}
+  return findUserByEmail(email);
+};
+
+export const getUserById = async (id: string) => {
+  return findUserById(id);
+};

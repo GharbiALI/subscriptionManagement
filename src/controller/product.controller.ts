@@ -2,9 +2,12 @@ import { Request, Response, NextFunction } from "express";
 import {
   listActiveProducts,
   addProduct,
+  softDeleteProductService,
   updateProduct as updateProductService,
+  checkProductForSoftDelete,
 } from "../services/product.services";
 import { mapProductResponse } from "../mapper/product.mapper";
+import { IProduct } from "../schemas/product.schemas";
 
 export const getProducts = async (
   _req: Request,
@@ -45,6 +48,36 @@ export const updateProduct = async (
       return;
     }
 
+    res.status(200).json({ data: mapProductResponse(product) });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const softDeleteProduct = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const checkProduct = await checkProductForSoftDelete(req.params.id);
+
+    if (checkProduct === null) {
+      res.status(404).json({
+        error: "Product not found",
+      });
+
+      return;
+    }
+
+    if (checkProduct === "ALREADY_DELETED") {
+      res.status(409).json({
+        error: "Product is already deleted",
+      });
+
+      return;
+    }
+    const product = (await softDeleteProductService(req.params.id)) as IProduct;
     res.status(200).json({ data: mapProductResponse(product) });
   } catch (err) {
     next(err);

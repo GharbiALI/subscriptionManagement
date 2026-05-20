@@ -26,8 +26,8 @@ describe("User routes integration", () => {
 
   describe("POST /api/user/register", () => {
     it("should return 201 with user and token on successful registration", async () => {
-    //given(validRegisterPayload)
-    //when
+      //given(validRegisterPayload)
+      //when
       const res = await request(app)
         .post("/api/user/register")
         .send(validRegisterPayload);
@@ -72,7 +72,6 @@ describe("User routes integration", () => {
   });
 
   describe("POST /api/user/login", () => {
-
     const validLoginPayload = {
       email: "alice@example.com",
       password: "password123",
@@ -132,6 +131,37 @@ describe("User routes integration", () => {
       expect(res.body.error).toContain("A valid email is required");
       expect(res.body.error).toContain(
         "Password must be at least 8 characters",
+      );
+    });
+  });
+
+  describe("GET /api/user/profile", () => {
+    it("should return 200 with the authenticated user's profile", async () => {
+      await request(app).post("/api/user/register").send(validRegisterPayload);
+      const loginRes = await request(app)
+        .post("/api/user/login")
+        .send({ email: "alice@example.com", password: "password123" });
+
+      const res = await request(app)
+        .get("/api/user/profile")
+        .set("Authorization", `Bearer ${loginRes.body.token}`);
+
+      expect(res.status).toBe(200);
+      expect(res.body.user).toMatchObject({
+        name: "Alice",
+        email: "alice@example.com",
+        role: "user",
+      });
+      expect(res.body.user).not.toHaveProperty("password");
+    });
+
+    it("should return 401 when no authorization token is provided", async () => {
+      const res = await request(app).get("/api/user/profile");
+
+      expect(res.status).toBe(401);
+      expect(res.body).toHaveProperty(
+        "message",
+        "Unauthorized: No token provided",
       );
     });
   });

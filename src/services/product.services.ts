@@ -1,7 +1,7 @@
 import {
   findAllActiveProducts,
   createProduct,
-  updateProductById,
+  updateProductById,findProductById
 } from "../repository/product.repository";
 import { IProduct } from "../schemas/product.schemas";
 
@@ -22,3 +22,24 @@ export const updateProduct = async (
   return updateProductById(id, data);
 };
 
+export const softDeleteProductService = async (
+  id: string,
+): Promise<IProduct | null> => {
+  return updateProductById(id, { isActive: false });
+};
+
+export const checkProductForSoftDelete = async (
+  id: string,
+): Promise<IProduct | "ALREADY_DELETED" | null> => {
+  const product = await findProductById(id);
+
+  if (!product) {
+    return null;
+  }
+
+  if (!product.isActive) {
+    return "ALREADY_DELETED";
+  }
+
+  return product;
+};

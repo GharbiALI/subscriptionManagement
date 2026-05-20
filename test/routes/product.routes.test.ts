@@ -156,4 +156,107 @@ describe("Product routes integration", () => {
     expect(res.body).toHaveProperty("error", "Invalid product ID");
   });
 });
+describe("DELETE /api/product/:id/soft-delete", () => {
+  const adminToken = `Bearer ${generateToken(
+    new Types.ObjectId(),
+    "admin",
+  )}`;
+
+  it("should soft delete a product when id is valid and user is admin", async () => {
+    // Given
+    const product = await Product.create({
+      name: "AI Model Subscription",
+      companyName: "Chat GPT",
+      price: 49.99,
+      description: "Access to generative AI model endpoints",
+      isActive: true,
+    });
+
+    // When
+    const res = await request(app)
+      .delete(`/api/product/${product._id.toString()}/soft-delete`)
+      .set("Authorization", adminToken);
+
+    // Then
+    expect(res.status).toBe(200);
+
+    expect(res.body).toHaveProperty("data");
+
+    expect(res.body.data).toEqual(
+      expect.objectContaining({
+        name: "AI Model Subscription",
+        companyName: "Chat GPT",
+        price: 49.99,
+        description: "Access to generative AI model endpoints",
+        isActive: false,
+      }),
+    );
+
+    const updatedProduct = await Product.findById(product._id);
+
+    expect(updatedProduct).not.toBeNull();
+
+    expect(updatedProduct?.isActive).toBe(false);
+  });
+
+  it("should return 404 when product does not exist", async () => {
+    // Given
+    const nonExistingId = new Types.ObjectId().toString();
+
+    // When
+    const res = await request(app)
+      .delete(`/api/product/${nonExistingId}/soft-delete`)
+      .set("Authorization", adminToken);
+
+    // Then
+    expect(res.status).toBe(404);
+
+    expect(res.body).toHaveProperty(
+      "error",
+      "Product not found",
+    );
+  });
+
+  it("should return 409 when product is already deleted", async () => {
+    // Given
+    const product = await Product.create({
+      name: "AI Model Subscription",
+      companyName: "Chat GPT",
+      price: 49.99,
+      description: "Access to generative AI model endpoints",
+      isActive: false,
+    });
+
+    // When
+    const res = await request(app)
+      .delete(`/api/product/${product._id.toString()}/soft-delete`)
+      .set("Authorization", adminToken);
+
+    // Then
+    expect(res.status).toBe(409);
+
+    expect(res.body).toHaveProperty(
+      "error",
+      "Product is already deleted",
+    );
+  });
+
+  it("should return 400 when product id is invalid", async () => {
+    // Given
+    const invalidId = "invalid-id";
+
+    // When
+    const res = await request(app)
+      .delete(`/api/product/${invalidId}/soft-delete`)
+      .set("Authorization", adminToken);
+
+    // Then
+    expect(res.status).toBe(400);
+
+    expect(res.body).toHaveProperty(
+      "error",
+      "Invalid product ID",
+    );
+  });
+});
 });

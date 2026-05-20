@@ -21,3 +21,6 @@ export const updateProductById = async (
   });
 };
 
+export const findProductById = async (id: string): Promise<IProduct | null> => {
+  return await Product.findById(id);
+};

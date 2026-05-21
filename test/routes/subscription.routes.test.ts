@@ -79,6 +79,171 @@ describe("Subscription routes integration", () => {
     });
   });
 
+  describe("POST /api/subscription/buy", () => {
+    it("should return 201 and create a subscription", async () => {
+      // Given
+      const userId = new Types.ObjectId();
+      const token = `Bearer ${generateToken(userId, "user")}`;
+
+      const product = await Product.create({
+        name: "AI Model Subscription",
+        companyName: "Chat GPT",
+        price: 49.99,
+        description: "Access to generative AI model endpoints",
+        isActive: true,
+      });
+
+      // When
+      const res = await request(app)
+        .post("/api/subscription/buy")
+        .set("Authorization", token)
+        .send({ productId: product._id.toString() });
+
+      // Then
+      expect(res.status).toBe(201);
+    });
+
+    it("should return 404 when product does not exist", async () => {
+      // Given
+      const userId = new Types.ObjectId();
+      const token = `Bearer ${generateToken(userId, "user")}`;
+
+      // When
+      const res = await request(app)
+        .post("/api/subscription/buy")
+        .set("Authorization", token)
+        .send({ productId: new Types.ObjectId().toString() });
+
+      // Then
+      expect(res.status).toBe(404);
+    });
+
+    it("should return 404 when product is inactive", async () => {
+      // Given
+      const userId = new Types.ObjectId();
+      const token = `Bearer ${generateToken(userId, "user")}`;
+
+      const product = await Product.create({
+        name: "Old Plan",
+        companyName: "Chat GPT",
+        price: 9.99,
+        description: "Deprecated plan",
+        isActive: false,
+      });
+
+      // When
+      const res = await request(app)
+        .post("/api/subscription/buy")
+        .set("Authorization", token)
+        .send({ productId: product._id.toString() });
+
+      // Then
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error", "Product not found or inactive");
+    });
+
+    it("should return 409 when user already has an active subscription for the same product", async () => {
+      // Given
+      const userId = new Types.ObjectId();
+      const token = `Bearer ${generateToken(userId, "user")}`;
+
+      const product = await Product.create({
+        name: "AI Model Subscription",
+        companyName: "Chat GPT",
+        price: 49.99,
+        description: "Access to generative AI model endpoints",
+        isActive: true,
+      });
+
+      await Subscription.create({
+        userId,
+        productId: product._id,
+        startDate: new Date(),
+        expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        status: "active",
+      });
+
+      // When
+      const res = await request(app)
+        .post("/api/subscription/buy")
+        .set("Authorization", token)
+        .send({ productId: product._id.toString() });
+
+      // Then
+      expect(res.status).toBe(409);
+      expect(res.body).toHaveProperty(
+        "error",
+        "You already have an active subscription for this product",
+      );
+    });
+
+    it("should return 401 when no token is provided", async () => {
+      // When
+      const res = await request(app)
+        .post("/api/subscription/buy")
+        .send({ productId: new Types.ObjectId().toString() });
+
+      // Then
+      expect(res.status).toBe(401);
+    });
+  });
+
+  describe("GET /api/subscription/active", () => {
+    it("should return 200 with active subscriptions", async () => {
+      // Given
+      const userId = new Types.ObjectId();
+      const token = `Bearer ${generateToken(userId, "user")}`;
+
+      const product = await Product.create({
+        name: "AI Model Subscription",
+        companyName: "Chat GPT",
+        price: 49.99,
+        description: "Access to generative AI model endpoints",
+        isActive: true,
+      });
+
+      await Subscription.create({
+        userId,
+        productId: product._id,
+        startDate: new Date(),
+        expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        status: "active",
+      });
+
+      // When
+      const res = await request(app)
+        .get("/api/subscription/active")
+        .set("Authorization", token);
+
+      // Then
+      expect(res.status).toBe(200);
+    });
+
+    it("should return 200 with empty array when user has no active subscriptions", async () => {
+      // Given
+      const userId = new Types.ObjectId();
+      const token = `Bearer ${generateToken(userId, "user")}`;
+
+      // When
+      const res = await request(app)
+        .get("/api/subscription/active")
+        .set("Authorization", token);
+
+      // Then
+      expect(res.status).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(res.body.data).toEqual([]);
+    });
+
+    it("should return 401 when no token is provided", async () => {
+      // When
+      const res = await request(app).get("/api/subscription/active");
+
+      // Then
+      expect(res.status).toBe(401);
+    });
+  });
+
   describe("PATCH /api/subscription/:id/cancel", () => {
     it("should return 200 and cancel the subscription when called more than 48h before renewal", async () => {
       // Given

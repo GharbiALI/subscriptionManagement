@@ -26,3 +26,10 @@ export const findExpiredSubscriptions = async (userId: string): Promise<ISubscri
     status: 'expired',
   }).populate('productId');
 };
+
+export const updateSubscriptionStatus = async (
+  id: string,
+  status: string
+): Promise<ISubscription | null> => {
+  return await Subscription.findByIdAndUpdate(id, { status }, { new: true });
+};

@@ -15,3 +15,7 @@ export const createSubscription = async (subData: Partial<ISubscription>): Promi
 export const findSubscriptionById = async (id: string): Promise<ISubscription | null> => {
   return await Subscription.findById(id).populate('productId');
 };
+
+export const findActiveSubscriptionsByUser = async (userId: string): Promise<ISubscription[]> => {
+  return await Subscription.find({ userId, status: 'active' }).populate('productId');
+};

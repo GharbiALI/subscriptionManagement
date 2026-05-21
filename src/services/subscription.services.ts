@@ -1,5 +1,5 @@
 import { ISubscription } from "../schemas/subscription.schemas";
-import { createSubscription,findSubscriptionById,findActiveSubscriptionsByUser,findExpiredSubscriptions } from "../repository/subscription.repository";
+import { createSubscription,findSubscriptionById,findActiveSubscriptionsByUser,findExpiredSubscriptions,updateSubscriptionStatus } from "../repository/subscription.repository";
 import { SubscriptionResponse, mapSubscription } from "../mapper/subscription.mapper";
 
 export const subscribe = async (
@@ -36,5 +36,21 @@ export const getExpiredSubscriptions = async (
   const subs = await findExpiredSubscriptions(userId);
   return subs.map((s) =>
     mapSubscription(s as ISubscription & { _id: unknown; productId: any }),
+  );
+};
+
+export const calculateHoursUntilExpiry = (expiryDate: Date): number => {
+  const msOneHour = 1000 * 60 * 60;
+
+  return (expiryDate.getTime() - Date.now()) / msOneHour;
+};
+
+export const cancelSubscription = async (
+  subscriptionId: string,
+): Promise<SubscriptionResponse> => {
+  
+  const updated = await updateSubscriptionStatus(subscriptionId, "cancelled");
+  return mapSubscription(
+    updated as ISubscription & { _id: unknown; productId: any },
   );
 };

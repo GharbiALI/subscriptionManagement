@@ -1,5 +1,5 @@
 import { ISubscription } from "../schemas/subscription.schemas";
-import { createSubscription,findSubscriptionById,findActiveSubscriptionsByUser } from "../repository/subscription.repository";
+import { createSubscription,findSubscriptionById,findActiveSubscriptionsByUser,findExpiredSubscriptions } from "../repository/subscription.repository";
 import { SubscriptionResponse, mapSubscription } from "../mapper/subscription.mapper";
 
 export const subscribe = async (
@@ -25,6 +25,15 @@ export const getActiveSubscriptions = async (
   userId: string,
 ): Promise<SubscriptionResponse[]> => {
   const subs = await findActiveSubscriptionsByUser(userId);
+  return subs.map((s) =>
+    mapSubscription(s as ISubscription & { _id: unknown; productId: any }),
+  );
+};
+
+export const getExpiredSubscriptions = async (
+  userId: string,
+): Promise<SubscriptionResponse[]> => {
+  const subs = await findExpiredSubscriptions(userId);
   return subs.map((s) =>
     mapSubscription(s as ISubscription & { _id: unknown; productId: any }),
   );

@@ -1,5 +1,5 @@
 import { Response, NextFunction } from "express";
-import { subscribe,getActiveSubscriptions } from "../services/subscription.services";
+import { subscribe,getActiveSubscriptions,getExpiredSubscriptions } from "../services/subscription.services";
 import { Product } from "../schemas/product.schemas";
 import { AuthRequest } from "../auth/auth.middleware";
 import { findActiveSubscriptionByUserAndProduct } from "../repository/subscription.repository";
@@ -44,6 +44,20 @@ export const getActiveSub = async (
     const userId = req.user!.userId;
     const subscriptions = await getActiveSubscriptions(userId);
     res.status(200).json({ success: true, data: subscriptions });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getExpiredSub = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const userId = req.user!.userId;
+    const subscriptions = await getExpiredSubscriptions(userId);
+    res.status(200).json({data: subscriptions });
   } catch (err) {
     next(err);
   }

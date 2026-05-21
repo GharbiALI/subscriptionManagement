@@ -19,3 +19,10 @@ export const findSubscriptionById = async (id: string): Promise<ISubscription | 
 export const findActiveSubscriptionsByUser = async (userId: string): Promise<ISubscription[]> => {
   return await Subscription.find({ userId, status: 'active' }).populate('productId');
 };
+
+export const findExpiredSubscriptions = async (userId: string): Promise<ISubscription[]> => {
+  return await Subscription.find({
+    userId,
+    status: 'expired',
+  }).populate('productId');
+};

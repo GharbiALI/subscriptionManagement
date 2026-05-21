@@ -31,3 +31,14 @@ export const mapSubscription = (
     status: subscription.status,
   };
 };
+
+export const mapActiveSubscriptionResponse = (
+  subscription: ISubscription & {productId: any },
+): string => {
+  const msPerDay = 1000 * 60 * 60 * 24;
+  const daysLeft = Math.ceil(
+    (new Date(subscription.expiryDate).getTime() - Date.now()) / msPerDay
+  );
+
+  return `${subscription.productId.name} will expire in ${daysLeft} days`;
+};

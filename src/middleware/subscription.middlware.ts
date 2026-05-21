@@ -15,3 +15,16 @@ export const validateProductIdForCreateSubscription = (
     }
     next();
 };
+
+export const validateSubscriptionId = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+):void => {
+  const { id } = req.params;
+    if (isvalidateId(id)) {
+       res.status(400).json({ error: "Valid subscription ID is required" });
+       return;
+    }
+    next();
+};

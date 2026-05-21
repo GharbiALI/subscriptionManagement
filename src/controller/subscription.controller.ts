@@ -1,5 +1,5 @@
 import { Response, NextFunction } from "express";
-import { subscribe } from "../services/subscription.services";
+import { subscribe,getActiveSubscriptions } from "../services/subscription.services";
 import { Product } from "../schemas/product.schemas";
 import { AuthRequest } from "../auth/auth.middleware";
 import { findActiveSubscriptionByUserAndProduct } from "../repository/subscription.repository";
@@ -30,6 +30,20 @@ export const createSubscription = async (
     }
     const result = await subscribe(userId, productId);
     res.status(201).json({ data: result });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getActiveSub = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const userId = req.user!.userId;
+    const subscriptions = await getActiveSubscriptions(userId);
+    res.status(200).json({ success: true, data: subscriptions });
   } catch (err) {
     next(err);
   }

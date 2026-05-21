@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import {
   validateProductInput,
   validateProductUpdateInput,
-  isvalidateId
+  isvalidateId,
 } from "../validator/product.validator";
 
 export const validateProductMiddleware = (
@@ -54,8 +54,7 @@ export const validateUpdateProductBody = (
   );
 
   if (error) {
-     res.status(400).json({ error });
-   
+    res.status(400).json({ error });
   }
 
   next();
@@ -67,9 +66,9 @@ export const validateIdMiddleware = (
   next: NextFunction,
 ): void => {
   const { id } = req.params;
- if(isvalidateId(id)) {
+  if (isvalidateId(id)) {
     res.status(400).json({ error: "Invalid product ID" });
-    return; 
+    return;
   }
   next();
 };

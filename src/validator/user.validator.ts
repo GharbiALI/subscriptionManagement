@@ -3,7 +3,7 @@ import validator from "validator";
 export const validateUserInput = (
   name: string,
   email: string,
-  password: string
+  password: string,
 ): string[] | null => {
   const errors: string[] = [];
 
@@ -24,7 +24,7 @@ export const validateUserInput = (
 
 export const validateUserLogin = (
   email: string,
-  password: string
+  password: string,
 ): string[] | null => {
   const errors: string[] = [];
 

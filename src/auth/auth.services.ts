@@ -21,4 +21,3 @@ export const generateToken = (userId: Types.ObjectId, role: string): string => {
 export const verifyToken = (token: string): JwtPayload => {
   return jwt.verify(token, jwtSecret) as JwtPayload;
 };
-

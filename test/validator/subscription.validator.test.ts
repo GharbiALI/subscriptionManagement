@@ -1,7 +1,6 @@
 import { isvalidateId } from "../../src/validator/subscription.validator";
 
 describe("isvalidateId Unit Tests", () => {
-  
   describe("Valid MongoDB ObjectIds", () => {
     it("should return false for a valid 24-character hex string", () => {
       //given

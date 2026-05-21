@@ -1,12 +1,20 @@
 import { ISubscription } from "../schemas/subscription.schemas";
-import { createSubscription,findSubscriptionById,findActiveSubscriptionsByUser,findExpiredSubscriptions,updateSubscriptionStatus } from "../repository/subscription.repository";
-import { SubscriptionResponse, mapSubscription } from "../mapper/subscription.mapper";
+import {
+  createSubscription,
+  findSubscriptionById,
+  findActiveSubscriptionsByUser,
+  findExpiredSubscriptions,
+  updateSubscriptionStatus,
+} from "../repository/subscription.repository";
+import {
+  SubscriptionResponse,
+  mapSubscription,
+} from "../mapper/subscription.mapper";
 
 export const subscribe = async (
   userId: string,
   productId: string,
 ): Promise<SubscriptionResponse> => {
-
   const expiryDate = new Date();
   expiryDate.setMonth(expiryDate.getMonth() + 1);
 
@@ -48,7 +56,6 @@ export const calculateHoursUntilExpiry = (expiryDate: Date): number => {
 export const cancelSubscription = async (
   subscriptionId: string,
 ): Promise<SubscriptionResponse> => {
-  
   const updated = await updateSubscriptionStatus(subscriptionId, "cancelled");
   return mapSubscription(
     updated as ISubscription & { _id: unknown; productId: any },

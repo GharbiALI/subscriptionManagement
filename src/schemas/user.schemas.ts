@@ -1,10 +1,10 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model } from "mongoose";
 
 export interface IUser {
   name: string;
   email: string;
   password: string;
-  role: 'user' | 'admin';
+  role: "user" | "admin";
 }
 
 const userSchema = new Schema<IUser>(
@@ -12,31 +12,31 @@ const userSchema = new Schema<IUser>(
     name: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
 
     email: {
       type: String,
       required: true,
       unique: true,
-      trim: true
+      trim: true,
     },
 
     password: {
       type: String,
       required: true,
-      minlength: 8
+      minlength: 8,
     },
 
     role: {
       type: String,
-      enum: ['user', 'admin'],
-      default: 'user'
-    }
+      enum: ["user", "admin"],
+      default: "user",
+    },
   },
   {
-    timestamps: true
-  }
+    timestamps: true,
+  },
 );
 
-export const User = model<IUser>('User', userSchema);
+export const User = model<IUser>("User", userSchema);

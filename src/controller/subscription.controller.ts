@@ -1,8 +1,17 @@
 import { Response, NextFunction } from "express";
-import { subscribe,calculateHoursUntilExpiry,getActiveSubscriptions,getExpiredSubscriptions,cancelSubscription } from "../services/subscription.services";
+import {
+  subscribe,
+  calculateHoursUntilExpiry,
+  getActiveSubscriptions,
+  getExpiredSubscriptions,
+  cancelSubscription,
+} from "../services/subscription.services";
 import { Product } from "../schemas/product.schemas";
 import { AuthRequest } from "../auth/auth.middleware";
-import { findActiveSubscriptionByUserAndProduct,findSubscriptionById } from "../repository/subscription.repository";
+import {
+  findActiveSubscriptionByUserAndProduct,
+  findSubscriptionById,
+} from "../repository/subscription.repository";
 
 export const createSubscription = async (
   req: AuthRequest,
@@ -57,7 +66,7 @@ export const getExpiredSub = async (
   try {
     const userId = req.user!.userId;
     const subscriptions = await getExpiredSubscriptions(userId);
-    res.status(200).json({data: subscriptions });
+    res.status(200).json({ data: subscriptions });
   } catch (err) {
     next(err);
   }
@@ -75,17 +84,26 @@ export const cancelSub = async (
     if (!sub) {
       res.status(404).json({ error: "Subscription not found" });
       return;
-    };
+    }
     if (sub.userId.toString() !== userId) {
-      res.status(403).json({ error: "You can only cancel your own subscriptions" });
+      res
+        .status(403)
+        .json({ error: "You can only cancel your own subscriptions" });
       return;
-    };
-    if(sub.status !== 'active') {
-      res.status(400).json({ error: "Only active subscriptions can be cancelled" });
+    }
+    if (sub.status !== "active") {
+      res
+        .status(400)
+        .json({ error: "Only active subscriptions can be cancelled" });
       return;
-    };
-    if(calculateHoursUntilExpiry(sub.expiryDate) <= 48) {
-      res.status(400).json({ error: "Cancellation is only allowed more than 48 hours before the renewal date" });
+    }
+    if (calculateHoursUntilExpiry(sub.expiryDate) <= 48) {
+      res
+        .status(400)
+        .json({
+          error:
+            "Cancellation is only allowed more than 48 hours before the renewal date",
+        });
       return;
     }
     const result = await cancelSubscription(id);

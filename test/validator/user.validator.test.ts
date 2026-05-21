@@ -1,9 +1,10 @@
-import { validateUserInput,validateUserLogin } from "../../src/validator/user.validator";
-
+import {
+  validateUserInput,
+  validateUserLogin,
+} from "../../src/validator/user.validator";
 
 describe("User Validator", () => {
   describe("validateUserInput", () => {
-
     it("should return null when all inputs are valid", () => {
       //given
       const name = "John Doe";
@@ -14,7 +15,7 @@ describe("User Validator", () => {
       const result = validateUserInput(name, email, password);
 
       //then
-     expect(result).toBeNull();
+      expect(result).toBeNull();
     });
 
     it("should return error when name is empty", () => {
@@ -109,56 +110,55 @@ describe("User Validator", () => {
       expect(result).toContain("A valid email is required");
       expect(result).toContain("Password must be at least 8 characters");
     });
-
   });
-      describe("validateUserLogin", () => {
-      it("should return null when login input is valid", () => {
-        //given
-        const email = "john@example.com";
-        const password = "password123";
+  describe("validateUserLogin", () => {
+    it("should return null when login input is valid", () => {
+      //given
+      const email = "john@example.com";
+      const password = "password123";
 
-        //when
-        const result = validateUserLogin(email, password);
+      //when
+      const result = validateUserLogin(email, password);
 
-        //then
-        expect(result).toBeNull();
-      });
-
-      it("should return error when email is invalid", () => {
-        //given
-        const email = "invalid-email";
-        const password = "password123";
-
-        //when
-        const result = validateUserLogin(email, password);
-
-        //then
-        expect(result).toContain("A valid email is required");
-      });
-
-      it("should return error when password is too short", () => {
-        //given
-        const email = "john@example.com";
-        const password = "short";
-
-        //when
-        const result = validateUserLogin(email, password);
-
-        //then
-        expect(result).toContain("Password must be at least 8 characters");
-      });
-
-      it("should return multiple errors when both login fields are invalid", () => {
-        //given
-        const email = "invalid-email";
-        const password = "short";
-
-        //when
-        const result = validateUserLogin(email, password);
-
-        //then
-        expect(result).toContain("A valid email is required");
-        expect(result).toContain("Password must be at least 8 characters");
-      });
+      //then
+      expect(result).toBeNull();
     });
+
+    it("should return error when email is invalid", () => {
+      //given
+      const email = "invalid-email";
+      const password = "password123";
+
+      //when
+      const result = validateUserLogin(email, password);
+
+      //then
+      expect(result).toContain("A valid email is required");
+    });
+
+    it("should return error when password is too short", () => {
+      //given
+      const email = "john@example.com";
+      const password = "short";
+
+      //when
+      const result = validateUserLogin(email, password);
+
+      //then
+      expect(result).toContain("Password must be at least 8 characters");
+    });
+
+    it("should return multiple errors when both login fields are invalid", () => {
+      //given
+      const email = "invalid-email";
+      const password = "short";
+
+      //when
+      const result = validateUserLogin(email, password);
+
+      //then
+      expect(result).toContain("A valid email is required");
+      expect(result).toContain("Password must be at least 8 characters");
+    });
+  });
 });

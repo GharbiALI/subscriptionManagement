@@ -149,6 +149,5 @@ describe("product.validator", () => {
       // Then
       expect(result).toContain("Price must be a positive number");
     });
-
   });
 });

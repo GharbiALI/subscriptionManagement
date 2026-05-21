@@ -4,11 +4,9 @@ import { registerUser, getUserByEmail } from "../../src/services/user.services";
 jest.mock("../../src/repository/user.repository");
 
 describe("user.services", () => {
-
   beforeEach(() => {
     jest.clearAllMocks();
   });
-
 
   it("should call createUser once when registering", async () => {
     //given
@@ -24,7 +22,6 @@ describe("user.services", () => {
     expect(userRepository.createUser).toHaveBeenCalledTimes(1);
   });
 
-
   it("should return the user that createUser returns", async () => {
     //given
     const fakeUser = {
@@ -36,11 +33,14 @@ describe("user.services", () => {
 
     (userRepository.createUser as jest.Mock).mockResolvedValue(fakeUser);
     //when
-    const result = await registerUser("Alice", "alice@example.com", "password123");
+    const result = await registerUser(
+      "Alice",
+      "alice@example.com",
+      "password123",
+    );
     //then
     expect(result).toEqual(fakeUser);
   });
-
 
   it("should return null when user is not found", async () => {
     //given
@@ -66,6 +66,4 @@ describe("user.services", () => {
     //then
     expect(result).toEqual(fakeUser);
   });
-  
-
 });

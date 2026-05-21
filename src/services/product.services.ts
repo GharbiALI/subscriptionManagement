@@ -1,7 +1,8 @@
 import {
   findAllActiveProducts,
   createProduct,
-  updateProductById,findProductById
+  updateProductById,
+  findProductById,
 } from "../repository/product.repository";
 import { IProduct } from "../schemas/product.schemas";
 

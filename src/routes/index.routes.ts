@@ -5,8 +5,8 @@ import subscriptionRoutes from "./subscription.routes";
 
 const router = Router();
 
-router.use("/user",usersRoutes);
+router.use("/user", usersRoutes);
 router.use("/product", productRoutes);
-router.use("/subscription",subscriptionRoutes);
+router.use("/subscription", subscriptionRoutes);
 
 export default router;

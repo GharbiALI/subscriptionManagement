@@ -1,35 +1,45 @@
-import { Subscription, ISubscription } from '../schemas/subscription.schemas';
+import { Subscription, ISubscription } from "../schemas/subscription.schemas";
 
 export const findActiveSubscriptionByUserAndProduct = async (
   userId: string,
-  productId: string
+  productId: string,
 ): Promise<ISubscription | null> => {
-  return await Subscription.findOne({ userId, productId, status: 'active' });
+  return await Subscription.findOne({ userId, productId, status: "active" });
 };
 
-export const createSubscription = async (subData: Partial<ISubscription>): Promise<ISubscription> => {
+export const createSubscription = async (
+  subData: Partial<ISubscription>,
+): Promise<ISubscription> => {
   const subscription = new Subscription(subData);
   return await subscription.save();
 };
 
-export const findSubscriptionById = async (id: string): Promise<ISubscription | null> => {
-  return await Subscription.findById(id).populate('productId');
+export const findSubscriptionById = async (
+  id: string,
+): Promise<ISubscription | null> => {
+  return await Subscription.findById(id).populate("productId");
 };
 
-export const findActiveSubscriptionsByUser = async (userId: string): Promise<ISubscription[]> => {
-  return await Subscription.find({ userId, status: 'active' }).populate('productId');
+export const findActiveSubscriptionsByUser = async (
+  userId: string,
+): Promise<ISubscription[]> => {
+  return await Subscription.find({ userId, status: "active" }).populate(
+    "productId",
+  );
 };
 
-export const findExpiredSubscriptions = async (userId: string): Promise<ISubscription[]> => {
+export const findExpiredSubscriptions = async (
+  userId: string,
+): Promise<ISubscription[]> => {
   return await Subscription.find({
     userId,
-    status: 'expired',
-  }).populate('productId');
+    status: "expired",
+  }).populate("productId");
 };
 
 export const updateSubscriptionStatus = async (
   id: string,
-  status: string
+  status: string,
 ): Promise<ISubscription | null> => {
   return await Subscription.findByIdAndUpdate(id, { status }, { new: true });
 };

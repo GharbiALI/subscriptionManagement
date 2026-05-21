@@ -1,4 +1,4 @@
-import { ISubscription } from '../schemas/subscription.schemas';
+import { ISubscription } from "../schemas/subscription.schemas";
 
 export interface SubscriptionResponse {
   id: string;
@@ -11,7 +11,7 @@ export interface SubscriptionResponse {
   };
   startDate: Date;
   expiryDate: Date;
-  status: 'active' | 'expired' | 'cancelled';
+  status: "active" | "expired" | "cancelled";
 }
 
 export const mapSubscription = (

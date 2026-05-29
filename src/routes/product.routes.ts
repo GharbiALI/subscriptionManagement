@@ -34,7 +34,7 @@ router.put(
   updateProduct,
 );
 router.delete(
-  "/:id/soft-delete",
+  "/:id",
   authenticate,
   authorizeAdmin,
   validateIdMiddleware,

@@ -15,9 +15,9 @@ const router = Router();
 
 router.use(authenticate);
 
-router.post("/buy", validateProductIdForCreateSubscription, createSubscription);
-router.get("/active", getActiveSub);
-router.get("/expired", getExpiredSub);
-router.patch("/:id/cancel", validateSubscriptionId, cancelSub);
+router.post("/subscriptions", validateProductIdForCreateSubscription, createSubscription);
+router.get("/subscriptions/activation", getActiveSub);
+router.get("/subscriptions/expiration", getExpiredSub);
+router.patch("/subscriptions/:id/cancellation", validateSubscriptionId, cancelSub);
 
 export default router;

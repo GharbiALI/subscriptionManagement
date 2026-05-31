@@ -99,7 +99,7 @@ describe("User/Auth routes integration", () => {
       await request(app).post("/api/auth/registration").send(validRegisterPayload);
       const res = await request(app)
         .post("/api/auth/login")
-        .send({ email: "alice@example.com", password: "wrongpass123" });
+        .send({ email: "alice@example.com", password: "WrongPass123!" });
 
       // Then
       expect(res.status).toBe(401);

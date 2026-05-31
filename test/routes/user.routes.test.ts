@@ -34,7 +34,7 @@ describe("User/Auth routes integration", () => {
 
       // Then
       expect(res.status).toBe(201);
-      expect(res.body).toHaveProperty("token");
+      expect(res.body.user).toHaveProperty("token");
       expect(res.body.user).toMatchObject({
         name: "Alice",
         email: "alice@example.com",
@@ -85,7 +85,7 @@ describe("User/Auth routes integration", () => {
 
       // Then
       expect(res.status).toBe(200);
-      expect(res.body).toHaveProperty("token");
+      expect(res.body.user).toHaveProperty("token");
       expect(res.body.user).toMatchObject({
         name: "Alice",
         email: "alice@example.com",
@@ -143,7 +143,7 @@ describe("User/Auth routes integration", () => {
       // When 
       const res = await request(app)
         .get("/api/users/profile")
-        .set("Authorization", `Bearer ${loginRes.body.token}`);
+        .set("Authorization", `Bearer ${loginRes.body.user.token}`);
 
       // Then
       expect(res.status).toBe(200);

@@ -12,12 +12,12 @@ describe("mapUserResponse", () => {
     };
 
     //when
-    const result = mapUserResponse(mockUser);
-
+    const result = mapUserResponse(mockUser, "mock.jwt.token");
     //then
     expect(result.name).toBe(mockUser.name);
     expect(result.email).toBe(mockUser.email);
     expect(result.role).toBe(mockUser.role);
+    expect(result.token).toBe("mock.jwt.token");
   });
 
   it("should not include password in mapped response", () => {
@@ -30,7 +30,7 @@ describe("mapUserResponse", () => {
     };
 
     //when
-    const result = mapUserResponse(mockUser);
+    const result = mapUserResponse(mockUser, "mock.jwt.token");
 
     //then
     expect(result).not.toHaveProperty("password");

@@ -32,8 +32,7 @@ export const register = async (
     const token = generateToken(user._id as any, user.role);
 
     return res.status(201).json({
-      user: mapUserResponse(user),
-      token,
+      user: mapUserResponse(user, token),
     });
   } catch (err) {
     return res.status(500).json({ error: "Failed to register user" });
@@ -88,10 +87,10 @@ export const login = async (
     const token = generateToken(user._id as any, user.role);
 
     return res.status(200).json({
-      user: mapUserResponse(user),
-      token,
+      user: mapUserResponse(user, token),
     });
   } catch (err) {
     return res.status(500).json({ error: "Failed to login" });
   }
 };
+  

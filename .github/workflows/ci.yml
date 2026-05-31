@@ -21,4 +21,8 @@ jobs:
         run: npm install
 
       - name: Run tests
+        env:
+          JWT_SECRET: test_secret_key_for_ci_purposes_only
+          jwtExpiresIn: 1h
+          NODE_ENV: test
         run: npm test

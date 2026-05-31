@@ -2,10 +2,11 @@ import request from "supertest";
 import dotenv from "dotenv";
 import app from "../../src/app";
 import { connectTestDB, disconnectTestDB, clearTestDB } from "../db.config";
+
 dotenv.config();
 jest.setTimeout(30000);
 
-describe("User routes integration", () => {
+describe("User/Auth routes integration", () => {
   beforeAll(async () => {
     await connectTestDB();
   });
@@ -24,15 +25,14 @@ describe("User routes integration", () => {
     password: "password123",
   };
 
-  describe("POST /api/user/register", () => {
+  describe("POST /api/auth/registration", () => {
     it("should return 201 with user and token on successful registration", async () => {
-      //given(validRegisterPayload)
-      //when
+      // When
       const res = await request(app)
-        .post("/api/user/register")
+        .post("/api/auth/registration")
         .send(validRegisterPayload);
 
-      //then
+      // Then
       expect(res.status).toBe(201);
       expect(res.body).toHaveProperty("token");
       expect(res.body.user).toMatchObject({
@@ -43,26 +43,25 @@ describe("User routes integration", () => {
     });
 
     it("should not expose the password in the response", async () => {
-      //given(validRegisterPayload)
-      //when
+      // When 
       const res = await request(app)
-        .post("/api/user/register")
+        .post("/api/auth/registration")
         .send(validRegisterPayload);
 
-      //then
+      // Then
       expect(res.status).toBe(201);
       expect(res.body.user).not.toHaveProperty("password");
     });
 
     it("should return 409 when the email is already registered", async () => {
-      //given(validRegisterPayload)
-      //when
-      await request(app).post("/api/user/register").send(validRegisterPayload);
+      // When 
+      await request(app).post("/api/auth/registration").send(validRegisterPayload);
 
       const secondResponse = await request(app)
-        .post("/api/user/register")
+        .post("/api/auth/registration")
         .send(validRegisterPayload);
-      //then
+      
+      // Then
       expect(secondResponse.status).toBe(409);
       expect(secondResponse.body).toHaveProperty(
         "error",
@@ -71,21 +70,20 @@ describe("User routes integration", () => {
     });
   });
 
-  describe("POST /api/user/login", () => {
+  describe("POST /api/auth/login", () => {
     const validLoginPayload = {
       email: "alice@example.com",
       password: "password123",
     };
 
     it("should return 200 with user and token on successful login", async () => {
-      //given(validLoginPayload)
-      //when
-      await request(app).post("/api/user/register").send(validRegisterPayload);
+      // When 
+      await request(app).post("/api/auth/registration").send(validRegisterPayload);
       const res = await request(app)
-        .post("/api/user/login")
+        .post("/api/auth/login")
         .send(validLoginPayload);
-      //then
 
+      // Then
       expect(res.status).toBe(200);
       expect(res.body).toHaveProperty("token");
       expect(res.body.user).toMatchObject({
@@ -97,36 +95,35 @@ describe("User routes integration", () => {
     });
 
     it("should return 401 for invalid password", async () => {
-      //given(validLoginPayload)
-      //when
-      await request(app).post("/api/user/register").send(validRegisterPayload);
+      // When
+      await request(app).post("/api/auth/registration").send(validRegisterPayload);
       const res = await request(app)
-        .post("/api/user/login")
+        .post("/api/auth/login")
         .send({ email: "alice@example.com", password: "wrongpass123" });
-      //then
 
+      // Then
       expect(res.status).toBe(401);
       expect(res.body).toHaveProperty("error", "Invalid credentials");
     });
 
     it("should return 401 when the user does not exist", async () => {
-      //given(validLoginPayload)
-      //when
+      // When 
       const res = await request(app)
-        .post("/api/user/login")
+        .post("/api/auth/login")
         .send(validLoginPayload);
-      //then
+      
+      // Then
       expect(res.status).toBe(401);
       expect(res.body).toHaveProperty("error", "Invalid credentials");
     });
 
     it("should return 400 when login data is invalid", async () => {
-      //given(invalidLoginPayload)
-      //when
+      // When 
       const res = await request(app)
-        .post("/api/user/login")
+        .post("/api/auth/login")
         .send({ email: "invalid-email", password: "short" });
-      //then
+      
+      // Then
       expect(res.status).toBe(400);
       expect(res.body.error).toContain("A valid email is required");
       expect(res.body.error).toContain(
@@ -135,17 +132,20 @@ describe("User routes integration", () => {
     });
   });
 
-  describe("GET /api/user/profile", () => {
+  describe("GET /api/users/profile", () => {
     it("should return 200 with the authenticated user's profile", async () => {
-      await request(app).post("/api/user/register").send(validRegisterPayload);
+
+      await request(app).post("/api/auth/registration").send(validRegisterPayload);
       const loginRes = await request(app)
-        .post("/api/user/login")
+        .post("/api/auth/login")
         .send({ email: "alice@example.com", password: "password123" });
 
+      // When 
       const res = await request(app)
-        .get("/api/user/profile")
+        .get("/api/users/profile")
         .set("Authorization", `Bearer ${loginRes.body.token}`);
 
+      // Then
       expect(res.status).toBe(200);
       expect(res.body.user).toMatchObject({
         name: "Alice",
@@ -156,8 +156,10 @@ describe("User routes integration", () => {
     });
 
     it("should return 401 when no authorization token is provided", async () => {
-      const res = await request(app).get("/api/user/profile");
+      // When 
+      const res = await request(app).get("/api/users/profile");
 
+      // Then
       expect(res.status).toBe(401);
       expect(res.body).toHaveProperty(
         "message",

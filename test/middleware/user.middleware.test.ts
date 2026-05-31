@@ -22,7 +22,7 @@ describe("user.middleware", () => {
       const req = mockRequest({
         name: "Alice",
         email: "alice@example.com",
-        password: "password123",
+        password: "Password123!",
       });
       const res = mockResponse();
 
@@ -35,7 +35,7 @@ describe("user.middleware", () => {
     it("should respond with 400 when name is missing", () => {
       const req = mockRequest({
         email: "alice@example.com",
-        password: "password123",
+        password: "Password123!",
       });
       const res = mockResponse();
 
@@ -52,7 +52,7 @@ describe("user.middleware", () => {
       const req = mockRequest({
         name: "Alice",
         email: "invalid",
-        password: "password123",
+        password: "Password123!",
       });
       const res = mockResponse();
 

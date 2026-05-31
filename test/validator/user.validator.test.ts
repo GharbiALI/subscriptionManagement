@@ -9,7 +9,7 @@ describe("User Validator", () => {
       //given
       const name = "John Doe";
       const email = "john@example.com";
-      const password = "password123";
+      const password = "Password123!";
 
       //when
       const result = validateUserInput(name, email, password);
@@ -22,7 +22,7 @@ describe("User Validator", () => {
       //given
       const name = "";
       const email = "john@example.com";
-      const password = "password123";
+      const password = "Password123!";
 
       //when
       const result = validateUserInput(name, email, password);
@@ -35,7 +35,7 @@ describe("User Validator", () => {
       //given
       const name = "   ";
       const email = "john@example.com";
-      const password = "password123";
+      const password = "Password123!";
 
       //when
       const result = validateUserInput(name, email, password);
@@ -48,7 +48,7 @@ describe("User Validator", () => {
       //given
       const name = "John Doe";
       const email = "invalid-email";
-      const password = "password123";
+      const password = "Password123!";
 
       //when
       const result = validateUserInput(name, email, password);
@@ -61,7 +61,7 @@ describe("User Validator", () => {
       //given
       const name = "John Doe";
       const email = "";
-      const password = "password123";
+      const password = "Password123!";
 
       //when
       const result = validateUserInput(name, email, password);
@@ -80,7 +80,7 @@ describe("User Validator", () => {
       const result = validateUserInput(name, email, password);
 
       //then
-      expect(result).toContain("Password must be at least 8 characters");
+      expect(result).toContain("Password must be at least 12 characters and include uppercase, lowercase, number and symbol");
     });
 
     it("should return error when password is empty", () => {
@@ -93,7 +93,7 @@ describe("User Validator", () => {
       const result = validateUserInput(name, email, password);
 
       //then
-      expect(result).toContain("Password must be at least 8 characters");
+      expect(result).toContain("Password must be at least 12 characters and include uppercase, lowercase, number and symbol");
     });
 
     it("should return multiple errors when multiple fields are invalid", () => {
@@ -108,14 +108,14 @@ describe("User Validator", () => {
       //then
       expect(result).toContain("Name is required");
       expect(result).toContain("A valid email is required");
-      expect(result).toContain("Password must be at least 8 characters");
+      expect(result).toContain("Password must be at least 12 characters and include uppercase, lowercase, number and symbol");
     });
   });
   describe("validateUserLogin", () => {
     it("should return null when login input is valid", () => {
       //given
       const email = "john@example.com";
-      const password = "password123";
+      const password = "Password123!";
 
       //when
       const result = validateUserLogin(email, password);
@@ -127,7 +127,7 @@ describe("User Validator", () => {
     it("should return error when email is invalid", () => {
       //given
       const email = "invalid-email";
-      const password = "password123";
+      const password = "Password123!";
 
       //when
       const result = validateUserLogin(email, password);
@@ -145,7 +145,7 @@ describe("User Validator", () => {
       const result = validateUserLogin(email, password);
 
       //then
-      expect(result).toContain("Password must be at least 8 characters");
+      expect(result).toContain("Password must be at least 12 characters and include uppercase, lowercase, number and symbol");
     });
 
     it("should return multiple errors when both login fields are invalid", () => {
@@ -158,7 +158,7 @@ describe("User Validator", () => {
 
       //then
       expect(result).toContain("A valid email is required");
-      expect(result).toContain("Password must be at least 8 characters");
+      expect(result).toContain("Password must be at least 12 characters and include uppercase, lowercase, number and symbol");
     });
   });
 });

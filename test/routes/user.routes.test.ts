@@ -22,7 +22,7 @@ describe("User/Auth routes integration", () => {
   const validRegisterPayload = {
     name: "Alice",
     email: "alice@example.com",
-    password: "password123",
+    password: "Password123!",
   };
 
   describe("POST /api/auth/registration", () => {
@@ -73,7 +73,7 @@ describe("User/Auth routes integration", () => {
   describe("POST /api/auth/login", () => {
     const validLoginPayload = {
       email: "alice@example.com",
-      password: "password123",
+      password: "Password123!",
     };
 
     it("should return 200 with user and token on successful login", async () => {
@@ -127,7 +127,7 @@ describe("User/Auth routes integration", () => {
       expect(res.status).toBe(400);
       expect(res.body.error).toContain("A valid email is required");
       expect(res.body.error).toContain(
-        "Password must be at least 8 characters",
+        "Password must be at least 12 characters and include uppercase, lowercase, number and symbol",
       );
     });
   });
@@ -138,7 +138,7 @@ describe("User/Auth routes integration", () => {
       await request(app).post("/api/auth/registration").send(validRegisterPayload);
       const loginRes = await request(app)
         .post("/api/auth/login")
-        .send({ email: "alice@example.com", password: "password123" });
+        .send({ email: "alice@example.com", password: "Password123!" });
 
       // When 
       const res = await request(app)

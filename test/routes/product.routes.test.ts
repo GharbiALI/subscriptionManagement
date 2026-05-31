@@ -23,7 +23,7 @@ describe("Product routes integration", () => {
     await clearTestDB();
   });
 
-  describe("GET /api/product", () => {
+  describe("GET /api/products", () => {
     it("should return 200 with active products", async () => {
       // Given
       await Product.create([
@@ -37,7 +37,7 @@ describe("Product routes integration", () => {
       ]);
 
       // When
-      const res = await request(app).get("/api/product");
+      const res = await request(app).get("/api/products");
 
       // Then
       expect(res.status).toBe(200);
@@ -56,7 +56,7 @@ describe("Product routes integration", () => {
     });
   });
 
-  describe("POST /api/product", () => {
+  describe("POST /api/products", () => {
     const adminToken = `Bearer ${generateToken(new Types.ObjectId(), "admin")}`;
 
     it("should create a new product when input is valid and user is admin", async () => {
@@ -71,7 +71,7 @@ describe("Product routes integration", () => {
 
       // When
       const res = await request(app)
-        .post("/api/product")
+        .post("/api/products")
         .set("Authorization", adminToken)
         .send(payload);
 
@@ -91,7 +91,7 @@ describe("Product routes integration", () => {
 
       // When
       const res = await request(app)
-        .post("/api/product")
+        .post("/api/products")
         .set("Authorization", adminToken)
         .send(invalidPayload);
 
@@ -109,7 +109,7 @@ describe("Product routes integration", () => {
     });
   });
 
-  describe("PUT /api/product/:id", () => {
+  describe("PUT /api/products/:id", () => {
     const adminToken = `Bearer ${generateToken(new Types.ObjectId(), "admin")}`;
 
     it("should update a product when id and body are valid", async () => {
@@ -129,7 +129,7 @@ describe("Product routes integration", () => {
 
       // When
       const res = await request(app)
-        .put(`/api/product/${product._id.toString()}`)
+        .put(`/api/products/${product._id.toString()}`)
         .set("Authorization", adminToken)
         .send(updatePayload);
 
@@ -142,9 +142,9 @@ describe("Product routes integration", () => {
       // Given
       const invalidId = "invalid-id";
 
-      // When
+      // When 
       const res = await request(app)
-        .put(`/api/product/${invalidId}`)
+        .put(`/api/products/${invalidId}`)
         .set("Authorization", adminToken)
         .send({ price: 59.99 });
 
@@ -153,7 +153,8 @@ describe("Product routes integration", () => {
       expect(res.body).toHaveProperty("error", "Invalid product ID");
     });
   });
-  describe("DELETE /api/product/:id/soft-delete", () => {
+
+  describe("DELETE /api/products/:id", () => {
     const adminToken = `Bearer ${generateToken(new Types.ObjectId(), "admin")}`;
 
     it("should soft delete a product when id is valid and user is admin", async () => {
@@ -166,16 +167,14 @@ describe("Product routes integration", () => {
         isActive: true,
       });
 
-      // When
+      // When 
       const res = await request(app)
-        .delete(`/api/product/${product._id.toString()}/soft-delete`)
+        .delete(`/api/products/${product._id.toString()}`)
         .set("Authorization", adminToken);
 
       // Then
       expect(res.status).toBe(200);
-
       expect(res.body).toHaveProperty("data");
-
       expect(res.body.data).toEqual(
         expect.objectContaining({
           name: "AI Model Subscription",
@@ -187,9 +186,7 @@ describe("Product routes integration", () => {
       );
 
       const updatedProduct = await Product.findById(product._id);
-
       expect(updatedProduct).not.toBeNull();
-
       expect(updatedProduct?.isActive).toBe(false);
     });
 
@@ -197,14 +194,13 @@ describe("Product routes integration", () => {
       // Given
       const nonExistingId = new Types.ObjectId().toString();
 
-      // When
+      // When 
       const res = await request(app)
-        .delete(`/api/product/${nonExistingId}/soft-delete`)
+        .delete(`/api/products/${nonExistingId}`)
         .set("Authorization", adminToken);
 
       // Then
       expect(res.status).toBe(404);
-
       expect(res.body).toHaveProperty("error", "Product not found");
     });
 
@@ -220,12 +216,11 @@ describe("Product routes integration", () => {
 
       // When
       const res = await request(app)
-        .delete(`/api/product/${product._id.toString()}/soft-delete`)
+        .delete(`/api/products/${product._id.toString()}`)
         .set("Authorization", adminToken);
 
       // Then
       expect(res.status).toBe(409);
-
       expect(res.body).toHaveProperty("error", "Product is already deleted");
     });
 
@@ -235,12 +230,11 @@ describe("Product routes integration", () => {
 
       // When
       const res = await request(app)
-        .delete(`/api/product/${invalidId}/soft-delete`)
+        .delete(`/api/products/${invalidId}`)
         .set("Authorization", adminToken);
 
       // Then
       expect(res.status).toBe(400);
-
       expect(res.body).toHaveProperty("error", "Invalid product ID");
     });
   });

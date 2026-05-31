@@ -24,7 +24,7 @@ describe("Subscription routes integration", () => {
     await clearTestDB();
   });
 
-  describe("GET /api/subscription/expired", () => {
+  describe("GET /api/users/subscriptions/expiration", () => {
     it("should return 200 with expired subscriptions", async () => {
       // Given
       const userId = new Types.ObjectId();
@@ -46,9 +46,9 @@ describe("Subscription routes integration", () => {
         status: "expired",
       });
 
-      // When
+      // When 
       const res = await request(app)
-        .get("/api/subscription/expired")
+        .get("/api/users/subscriptions/expiration")
         .set("Authorization", token);
 
       // Then
@@ -60,9 +60,9 @@ describe("Subscription routes integration", () => {
       const userId = new Types.ObjectId();
       const token = `Bearer ${generateToken(userId, "user")}`;
 
-      // When
+      // When 
       const res = await request(app)
-        .get("/api/subscription/expired")
+        .get("/api/users/subscriptions/expiration")
         .set("Authorization", token);
 
       // Then
@@ -71,15 +71,15 @@ describe("Subscription routes integration", () => {
     });
 
     it("should return 401 when no token is provided", async () => {
-      // When
-      const res = await request(app).get("/api/subscription/expired");
+      // When 
+      const res = await request(app).get("/api/users/subscriptions/expiration");
 
       // Then
       expect(res.status).toBe(401);
     });
   });
 
-  describe("POST /api/subscription/buy", () => {
+  describe("POST /api/users/subscriptions", () => {
     it("should return 201 and create a subscription", async () => {
       // Given
       const userId = new Types.ObjectId();
@@ -93,9 +93,9 @@ describe("Subscription routes integration", () => {
         isActive: true,
       });
 
-      // When
+      // When 
       const res = await request(app)
-        .post("/api/subscription/buy")
+        .post("/api/users/subscriptions")
         .set("Authorization", token)
         .send({ productId: product._id.toString() });
 
@@ -108,9 +108,9 @@ describe("Subscription routes integration", () => {
       const userId = new Types.ObjectId();
       const token = `Bearer ${generateToken(userId, "user")}`;
 
-      // When
+      // When 
       const res = await request(app)
-        .post("/api/subscription/buy")
+        .post("/api/users/subscriptions")
         .set("Authorization", token)
         .send({ productId: new Types.ObjectId().toString() });
 
@@ -131,9 +131,9 @@ describe("Subscription routes integration", () => {
         isActive: false,
       });
 
-      // When
+      // When 
       const res = await request(app)
-        .post("/api/subscription/buy")
+        .post("/api/users/subscriptions")
         .set("Authorization", token)
         .send({ productId: product._id.toString() });
 
@@ -163,9 +163,9 @@ describe("Subscription routes integration", () => {
         status: "active",
       });
 
-      // When
+      // When 
       const res = await request(app)
-        .post("/api/subscription/buy")
+        .post("/api/users/subscriptions")
         .set("Authorization", token)
         .send({ productId: product._id.toString() });
 
@@ -180,7 +180,7 @@ describe("Subscription routes integration", () => {
     it("should return 401 when no token is provided", async () => {
       // When
       const res = await request(app)
-        .post("/api/subscription/buy")
+        .post("/api/users/subscriptions")
         .send({ productId: new Types.ObjectId().toString() });
 
       // Then
@@ -188,7 +188,7 @@ describe("Subscription routes integration", () => {
     });
   });
 
-  describe("GET /api/subscription/active", () => {
+  describe("GET /api/users/subscriptions/activation", () => {
     it("should return 200 with active subscriptions", async () => {
       // Given
       const userId = new Types.ObjectId();
@@ -212,7 +212,7 @@ describe("Subscription routes integration", () => {
 
       // When
       const res = await request(app)
-        .get("/api/subscription/active")
+        .get("/api/users/subscriptions/activation")
         .set("Authorization", token);
 
       // Then
@@ -226,7 +226,7 @@ describe("Subscription routes integration", () => {
 
       // When
       const res = await request(app)
-        .get("/api/subscription/active")
+        .get("/api/users/subscriptions/activation")
         .set("Authorization", token);
 
       // Then
@@ -236,15 +236,15 @@ describe("Subscription routes integration", () => {
     });
 
     it("should return 401 when no token is provided", async () => {
-      // When
-      const res = await request(app).get("/api/subscription/active");
+      // When 
+      const res = await request(app).get("/api/users/subscriptions/activation");
 
       // Then
       expect(res.status).toBe(401);
     });
   });
 
-  describe("PATCH /api/subscription/:id/cancel", () => {
+  describe("PATCH /api/users/subscriptions/:id/cancellation", () => {
     it("should return 200 and cancel the subscription when called more than 48h before renewal", async () => {
       // Given
       const userId = new Types.ObjectId();
@@ -258,7 +258,6 @@ describe("Subscription routes integration", () => {
         isActive: true,
       });
 
-      // expiryDate is 10 days from now → well beyond the 48h window
       const sub = await Subscription.create({
         userId,
         productId: product._id,
@@ -269,7 +268,7 @@ describe("Subscription routes integration", () => {
 
       // When
       const res = await request(app)
-        .patch(`/api/subscription/${sub._id}/cancel`)
+        .patch(`/api/users/subscriptions/${sub._id}/cancellation`)
         .set("Authorization", token);
 
       // Then
@@ -298,9 +297,9 @@ describe("Subscription routes integration", () => {
         status: "cancelled",
       });
 
-      // When
+      // When 
       const res = await request(app)
-        .patch(`/api/subscription/${sub._id}/cancel`)
+        .patch(`/api/users/subscriptions/${sub._id}/cancellation`)
         .set("Authorization", token);
 
       // Then

@@ -1,4 +1,19 @@
 services:
+  api:
+    build: .
+    container_name: express-api
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      JWT_SECRET: 12345
+      MONGO_URI: mongodb://admin:password123@mongodb:27017/myapp?authSource=admin
+    depends_on:
+      - mongodb
+    volumes:
+      - .:/app
+      - /app/node_modules
+  
   mongodb:
     image: mongo:7
     container_name: express-mongodb
